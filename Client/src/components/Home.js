@@ -7,11 +7,11 @@ import { SearchUser } from "./SearchUser";
 
 
 export const Home = () => {
+    const [tab, setTab] = useState('home')
     const [username, setUsername] = useState(false)
     const [password, setPassword] = useState(false)
     const [checkAuth, setCheckAuth] = useState(false)
     const [auth, setAuth] = useState(false)
-    const userArray = useUserFromAPI() 
     useEffect(() => {
         if(checkAuth) {
             const URL = `http://${window.location.host}/auth?username=${username}&password=${password}` 
@@ -24,9 +24,23 @@ export const Home = () => {
         }
     },[checkAuth])
 
+
+    const switchTab = (tab) => {
+        console.log(tab)
+        switch (tab) {
+            case 'home':
+                return <UserList/>
+            case 'adduser':
+                    return <AddUser/>
+            case 'search':
+                    return <SearchUser userArray={userArray}/>
+        }
+    }
+
     return (
         <div>
-            {auth ? <div>
+            <h1 className={'dashboardTitle'}>{'User Dashboard'}</h1>
+            {!auth ? <div>
                 <div>
                     <span>{'username'}</span>
                     <input onChange={e => setUsername(e.target.value)}></input>
@@ -41,9 +55,21 @@ export const Home = () => {
             </div> 
             : (
                 <div className={'options'}>
-                    <UserList userArray={userArray}/>
-                    <SearchUser/>
-                    <AddUser/>
+                    <div className={'tabs'}>
+                        <div onClick={() => setTab('home')}>
+                            {'Home'}
+                        </div>
+                        <div onClick={() => setTab('adduser')}>
+                            {'Add User'}
+                        </div>
+                        <div onClick={() => setTab('search')}>
+                            {'Search'}
+                        </div>
+                    </div>
+                    {switchTab(tab)}
+                    {/* <UserList userArray={userArray}/> */}
+                    {/* <SearchUser userArray={userArray}/> */}
+                    {/* <AddUser userArray={userArray}/> */}
                 </div>
                 )
             }
